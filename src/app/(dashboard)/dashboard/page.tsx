@@ -23,7 +23,17 @@ const Dashboard = async () => {
           -1
         )) as string[]
   
-        const lastMessage = JSON.parse(lastMessageRaw) as Message
+        let lastMessage;
+        if (lastMessageRaw) {
+            try {
+                lastMessage = JSON.parse(lastMessageRaw) as Message;
+            } catch (error) {
+                console.error("Failed to parse last message:", error);
+                lastMessage = null; // Handle case if the message can't be parsed
+            }
+        } else {
+            lastMessage = null; // Handle case where there is no message
+        }
   
         return {
           ...friend,
@@ -60,9 +70,9 @@ const Dashboard = async () => {
                             <h4 className='text-lg font-semibold'>{friend.name}</h4>
                             <p className='mt-1 max-w-md'>
                                 <span className='text-zinc-400'>
-                                    {friend.lastMessage.senderId === session.user.id ? 'You: ' : ''}
+                                    {friend.lastMessage?.senderId === session.user.id ? 'You: ' : ''}
                                 </span>
-                                {friend.lastMessage.text}
+                                {friend.lastMessage?.text}
                             </p>
                         </div>
                     </Link>
